@@ -31,7 +31,9 @@ const Home = () => {
 	};
 
 	function deleteTask(index) {
-		list.splice(index, 1);
+		let copyList = [...list];
+		copyList.splice(index, 1);
+		setList(copyList);
 	};
 
 	return (
@@ -41,7 +43,7 @@ const Home = () => {
 				<input
 					className="form-control mx-auto" style={styleInput} type="text" placeholder="New Task"
 					onKeyDown={(e) => {
-						if (e.key === "Enter") {
+						if (e.key === "Enter" && e.target.value !== "") {
 							setList([...list, e.target.value]);
 							e.target.value = "";
 						}
@@ -53,7 +55,7 @@ const Home = () => {
 						<div className="row" key={index} onMouseEnter={() => mouseOver(index)} onMouseLeave={mouseExit}>
 							<div className="col-1" style={{ ...styleTask, borderRight: "1px solid red" }}></div>
 							<div className="col-10" style={styleTask}>{task}</div>
-							<div className="col-1" style={styleTask}>
+							<div className="col-1 text-end" style={styleTask}>
 								<i className="fa-solid fa-eraser" onClick={() => { deleteTask(index) }}
 									style={{ opacity: visibleIcon === index ? 1 : 0 }}></i>
 							</div>
