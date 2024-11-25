@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const styleInput = {
 	marginTop: 0,
@@ -29,29 +29,35 @@ const Home = () => {
 		setVisibleIcon(null);
 	};
 
-	function deleteTask(taskId) {
-		/*
-		let copyList = [...list];
-		copyList.splice(index, 1);
-		setList(copyList);
-		*/
-		fetch(`https://playground.4geeks.com/todo/todos/${taskId}`, {
-			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json'
-			}
+	function getTasks() {
+		fetch("https://playground.4geeks.com/todo/users/DanielCP")
+			.then((response) => {
+				if (!response.ok) {
+					createUser()
+				}
+				else {
+					return response.json()
+				}
+			})
+			.then((data) => {
+				setList(data.todos)
+			})
+			.catch((err) => { err })
+	}
+
+	useEffect(() => {
+		getTasks()
+	}, [])
+
+	function createUser() {
+		fetch("https://playground.4geeks.com/todo/users/DanielCP", {
+			method: "POST"
 		})
-			.then(res => {
-				//if (!res.ok) throw Error(res.statusText);
-				return res.json();
+			.then((res) => {
+				if (!res.ok) throw Error(res.statusText);
 			})
-			.then(data => {
-				getTasks();
-				console.log(data);
-			})
-			.catch(error => console.error(error));
-		getTasks();
-	};
+			.catch((err) => { err })
+	}
 
 	function newTask(taskInput) {
 
@@ -69,34 +75,33 @@ const Home = () => {
 			}
 		})
 			.then((response) => {
-				//if (!response.ok) throw Error(response.statusText);
+				if (!response.ok) throw Error(response.statusText);
 				return response.json();
 			})
 			.then((data) => {
 				console.log("Tarea agregada", data);
 				setList([...list, data]);
-				//setList = "";
 			})
 			.catch((err) => {
 				console.log(err);
 			})
-
-		/*
-		
-		*/
 	}
 
-	function getTasks() {
-		fetch("https://playground.4geeks.com/todo/users/DanielCP")
-			.then((response) => {
-				return response.json()
+	function deleteTask(taskId) {
+		fetch(`https://playground.4geeks.com/todo/todos/${taskId}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+			.then(res => {
+				if (res.ok) {
+					getTasks();
+				}
 			})
-			.then((data) => {
-				setList(data.todos)
-				//console.log(data.todos);
-			})
-			.catch((err) => { err })
-	}
+			.catch(error => console.error(error));
+	};
+
 
 	return (
 		<>
@@ -129,14 +134,14 @@ const Home = () => {
 			</div>
 			<div className="container bg-white text-black-50 d-flex justify-content-between" >
 				<p>{list.length === 0 ? "No tasks, add tasks" : `You have ${list.length} tasks.`}</p>
-				<button className="btn btn-dark p-0" onClick={getTasks}
-					style={{ opacity: "50%", fontSize: "0.7em", margin: 3 }}>
-					Get Tasks
-				</button>
+
 			</div>
 
 		</>
 	);
 };
-
+/*<button className="btn btn-dark p-0" onClick={getTasks}
+					style={{ opacity: "50%", fontSize: "0.7em", margin: 3 }}>
+					Get Tasks
+				</button>*/
 export default Home;
