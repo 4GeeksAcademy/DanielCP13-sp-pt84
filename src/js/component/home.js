@@ -4,18 +4,18 @@ const styleInput = {
 	marginTop: 0,
 	fontSize: "0.5em",
 	width: "50%",
-};
+}
 
 const styleFoil = {
 	marginTop: "0.3em",
 
 	background: "white",
-};
+}
 const styleTask = {
 	textAlign: "left",
 	borderBottom: "1px solid blue",
 
-};
+}
 
 const Home = () => {
 	const [list, setList] = useState([]);
@@ -23,11 +23,11 @@ const Home = () => {
 	const [visibleIcon, setVisibleIcon] = useState(false);
 
 	function mouseOver(index) {
-		setVisibleIcon(index);
-	};
+		setVisibleIcon(index)
+	}
 	function mouseExit() {
-		setVisibleIcon(null);
-	};
+		setVisibleIcon(null)
+	}
 
 	function getTasks() {
 		fetch("https://playground.4geeks.com/todo/users/DanielCP")
@@ -76,32 +76,40 @@ const Home = () => {
 		})
 			.then((response) => {
 				if (!response.ok) throw Error(response.statusText);
-				return response.json();
+				return response.json()
 			})
 			.then((data) => {
-				console.log("Tarea agregada", data);
-				setList([...list, data]);
+				setList([...list, data])
 			})
 			.catch((err) => {
-				console.log(err);
+				console.log(err)
 			})
 	}
 
 	function deleteTask(taskId) {
 		fetch(`https://playground.4geeks.com/todo/todos/${taskId}`, {
-			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json'
-			}
+			method: 'DELETE'
 		})
 			.then(res => {
 				if (res.ok) {
-					getTasks();
+					getTasks()
 				}
 			})
-			.catch(error => console.error(error));
-	};
+			.catch(error => console.error(error))
+	}
 
+	function deleteAll() {
+		setList([])
+		fetch("https://playground.4geeks.com/todo/users/DanielCP", {
+			method: 'DELETE'
+		})
+			.then(res => {
+				if (res.ok) {
+					createUser()
+				}
+			})
+			.catch(error => console.error(error))
+	}
 
 	return (
 		<>
@@ -112,8 +120,8 @@ const Home = () => {
 					onChange={(e) => setTaskInput(e.target.value)}
 					onKeyDown={(e) => {
 						if (e.key === "Enter" && e.target.value !== "") {
-							newTask(taskInput);
-							setTaskInput("");
+							newTask(taskInput)
+							setTaskInput("")
 						}
 					}} />
 			</div>
@@ -134,14 +142,14 @@ const Home = () => {
 			</div>
 			<div className="container bg-white text-black-50 d-flex justify-content-between" >
 				<p>{list.length === 0 ? "No tasks, add tasks" : `You have ${list.length} tasks.`}</p>
-
+				<button className="btn btn-dark p-0" onClick={deleteAll}
+					style={{ opacity: "50%", fontSize: "0.7em", margin: 3 }}>
+					Delete Tasks
+				</button>
 			</div>
 
 		</>
 	);
 };
-/*<button className="btn btn-dark p-0" onClick={getTasks}
-					style={{ opacity: "50%", fontSize: "0.7em", margin: 3 }}>
-					Get Tasks
-				</button>*/
+
 export default Home;
